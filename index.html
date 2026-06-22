@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ihang Ishamura Shakti — Web Application Penetration Tester</title>
+<meta name="description" content="Ihang Ishamura Shakti — cybersecurity practitioner focused on web application security and penetration testing. CWSE, CAPT, CSOA, CompTIA Security+." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0f17; --bg-2:#0e1420; --surface:#131c2b; --surface-2:#18222f;
+    --line:#223044; --line-soft:#1a2536;
+    --text:#e9eef6; --muted:#8b98ab; --faint:#5b6678;
+    --accent:#54d6c2; --accent-dim:#2f8d80; --accent-ink:#04221e;
+    --sev-high:#ff6f6f; --sev-med:#f3b95f; --sev-info:#54d6c2;
+    --maxw:1080px;
+    --r:14px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:"Inter",system-ui,sans-serif; line-height:1.6;
+    -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  }
+  body::before{
+    content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(900px 500px at 78% -8%, rgba(84,214,194,.10), transparent 60%),
+      radial-gradient(700px 460px at -6% 18%, rgba(84,214,194,.05), transparent 60%);
+  }
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 24px; position:relative; z-index:1}
+  a{color:inherit; text-decoration:none}
+  .mono{font-family:"JetBrains Mono",monospace}
+  .accent{color:var(--accent)}
+
+  /* ---------- nav ---------- */
+  header.nav{position:sticky; top:0; z-index:50; backdrop-filter:blur(10px);
+    background:rgba(11,15,23,.72); border-bottom:1px solid var(--line-soft)}
+  .nav-inner{max-width:var(--maxw); margin:0 auto; padding:14px 24px;
+    display:flex; align-items:center; justify-content:space-between; gap:18px}
+  .brand{font-family:"JetBrains Mono",monospace; font-weight:500; font-size:15px; letter-spacing:.02em; color:var(--text)}
+  .brand b{color:var(--accent); font-weight:700}
+  .dot{display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--accent);
+    margin-right:9px; box-shadow:0 0 0 3px rgba(84,214,194,.18); vertical-align:middle}
+  nav.links{display:flex; gap:6px; align-items:center}
+  nav.links a{font-size:13.5px; color:var(--muted); padding:8px 11px; border-radius:8px; transition:color .15s, background .15s}
+  nav.links a:hover{color:var(--text); background:var(--surface-2)}
+  nav.links a.cv{color:var(--accent-ink); background:var(--accent); font-weight:600}
+  nav.links a.cv:hover{filter:brightness(1.06)}
+  .burger{display:none; background:none; border:1px solid var(--line); color:var(--text);
+    border-radius:9px; padding:8px 10px; cursor:pointer}
+  .burger span{display:block; width:18px; height:2px; background:var(--text); margin:3px 0; border-radius:2px}
+
+  /* ---------- hero ---------- */
+  .hero{padding:78px 0 28px}
+  .hero-grid{display:grid; grid-template-columns:1.45fr .85fr; gap:42px; align-items:center}
+  .eyebrow{font-family:"JetBrains Mono",monospace; font-size:12.5px; letter-spacing:.22em;
+    text-transform:uppercase; color:var(--accent); margin:0 0 18px}
+  .eyebrow::before{content:"// "; color:var(--accent-dim)}
+  h1.name{font-family:"Space Grotesk",sans-serif; font-weight:700; line-height:1.02;
+    font-size:clamp(38px,6.4vw,62px); letter-spacing:-.02em; margin:0 0 18px}
+  .lead{font-size:clamp(16px,2vw,18.5px); color:#cdd6e2; max-width:38ch; margin:0 0 26px}
+  .meta{display:flex; flex-wrap:wrap; gap:9px; margin-bottom:28px}
+  .chip{font-family:"JetBrains Mono",monospace; font-size:12px; color:var(--muted);
+    border:1px solid var(--line); background:var(--surface); padding:6px 11px; border-radius:999px}
+  .chip.ok::before{content:"●"; color:var(--accent); margin-right:7px; font-size:9px; vertical-align:1px}
+  .cta{display:flex; flex-wrap:wrap; gap:12px}
+  .btn{display:inline-flex; align-items:center; gap:9px; font-size:14px; font-weight:600;
+    padding:12px 18px; border-radius:11px; border:1px solid var(--line); color:var(--text);
+    background:var(--surface); transition:transform .15s, border-color .15s, background .15s}
+  .btn:hover{transform:translateY(-2px); border-color:var(--accent-dim)}
+  .btn.primary{background:var(--accent); color:var(--accent-ink); border-color:transparent}
+  .btn.primary:hover{filter:brightness(1.06)}
+  .btn svg{width:16px; height:16px}
+
+  /* dossier card */
+  .dossier{background:linear-gradient(180deg,var(--surface),var(--bg-2));
+    border:1px solid var(--line); border-radius:16px; overflow:hidden;
+    box-shadow:0 24px 60px -34px rgba(0,0,0,.8)}
+  .dossier .bar{display:flex; align-items:center; gap:8px; padding:12px 16px;
+    border-bottom:1px solid var(--line-soft); background:rgba(255,255,255,.015)}
+  .dossier .bar i{width:10px; height:10px; border-radius:50%; background:#222c3c; display:inline-block}
+  .dossier .bar i:nth-child(1){background:#ff6f6f55}
+  .dossier .bar i:nth-child(2){background:#f3b95f55}
+  .dossier .bar i:nth-child(3){background:#54d6c255}
+  .dossier .bar span{margin-left:6px; font-family:"JetBrains Mono",monospace; font-size:11.5px; color:var(--faint)}
+  .dossier dl{margin:0; padding:16px 18px 18px; font-family:"JetBrains Mono",monospace; font-size:13px}
+  .dossier .row{display:grid; grid-template-columns:84px 1fr; gap:10px; padding:7px 0; border-bottom:1px dashed var(--line-soft)}
+  .dossier .row:last-child{border-bottom:0}
+  .dossier dt{color:var(--faint)}
+  .dossier dd{margin:0; color:#dbe3ee}
+  .dossier dd b{color:var(--accent); font-weight:700}
+
+  /* ---------- pipeline (signature) ---------- */
+  .pipe-band{border-top:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft);
+    background:var(--bg-2); margin-top:34px}
+  .pipe-head{font-family:"JetBrains Mono",monospace; font-size:11.5px; letter-spacing:.2em;
+    text-transform:uppercase; color:var(--faint); padding:22px 0 4px}
+  .pipe{display:grid; grid-template-columns:repeat(5,1fr); gap:0; padding:14px 0 30px; position:relative}
+  .stage{position:relative; padding:0 14px}
+  .stage:not(:last-child)::after{content:""; position:absolute; top:13px; right:-2px; width:100%;
+    height:2px; background:linear-gradient(90deg,var(--accent-dim),transparent); opacity:.5}
+  .stage .node{display:flex; align-items:center; gap:10px; margin-bottom:9px}
+  .stage .num{width:28px; height:28px; border-radius:8px; display:grid; place-items:center;
+    font-family:"JetBrains Mono",monospace; font-size:12px; font-weight:700; color:var(--accent);
+    background:var(--surface); border:1px solid var(--accent-dim)}
+  .stage h4{font-family:"Space Grotesk",sans-serif; font-size:14.5px; margin:0; letter-spacing:-.01em}
+  .stage p{margin:0; font-size:12.5px; color:var(--muted); padding-left:38px}
+
+  /* ---------- sections ---------- */
+  section{padding:72px 0; position:relative}
+  .sec-head{display:flex; align-items:baseline; gap:14px; margin-bottom:34px; flex-wrap:wrap}
+  .sec-tag{font-family:"JetBrains Mono",monospace; font-size:12px; color:var(--accent); letter-spacing:.05em}
+  .sec-title{font-family:"Space Grotesk",sans-serif; font-weight:600; font-size:clamp(24px,3.4vw,32px);
+    letter-spacing:-.02em; margin:0}
+  .sec-rule{flex:1; height:1px; background:linear-gradient(90deg,var(--line),transparent); align-self:center; min-width:40px}
+  .about p{max-width:64ch; color:#cdd6e2; font-size:16.5px}
+  .about p + p{margin-top:14px}
+
+  /* certifications */
+  .cert-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:16px}
+  .cert{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:20px;
+    transition:transform .18s, border-color .18s; position:relative; overflow:hidden}
+  .cert::before{content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--accent); opacity:.0; transition:opacity .18s}
+  .cert:hover{transform:translateY(-3px); border-color:var(--accent-dim)}
+  .cert:hover::before{opacity:1}
+  .cert .code{font-family:"JetBrains Mono",monospace; font-size:12px; color:var(--accent); margin-bottom:8px; display:block}
+  .cert h3{font-family:"Space Grotesk",sans-serif; font-size:18px; margin:0 0 4px; letter-spacing:-.01em}
+  .cert .issuer{font-size:13px; color:var(--faint); font-family:"JetBrains Mono",monospace; margin-bottom:10px}
+  .cert p{margin:0; font-size:14px; color:var(--muted)}
+
+  /* skills */
+  .skill-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:16px}
+  .skill{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:18px 20px}
+  .skill h3{font-family:"JetBrains Mono",monospace; font-size:12.5px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--accent); margin:0 0 13px; display:flex; align-items:center; gap:9px}
+  .skill h3::before{content:""; width:6px; height:6px; background:var(--accent); border-radius:2px; display:inline-block}
+  .tags{display:flex; flex-wrap:wrap; gap:8px}
+  .tag{font-size:12.5px; color:#c4cedb; background:var(--surface-2); border:1px solid var(--line-soft);
+    padding:5px 11px; border-radius:8px}
+
+  /* work / highlights */
+  .work-note{font-family:"JetBrains Mono",monospace; font-size:12.5px; color:var(--faint); margin:-14px 0 26px}
+  .work-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
+  .find{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:20px;
+    display:flex; flex-direction:column; gap:11px; transition:transform .18s, border-color .18s}
+  .find:hover{transform:translateY(-3px); border-color:var(--accent-dim)}
+  .find .top{display:flex; align-items:center; justify-content:space-between; gap:10px}
+  .find h3{font-family:"Space Grotesk",sans-serif; font-size:17px; margin:0; letter-spacing:-.01em}
+  .sev{font-family:"JetBrains Mono",monospace; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase;
+    padding:4px 8px; border-radius:6px; border:1px solid; white-space:nowrap}
+  .sev.high{color:var(--sev-high); border-color:#ff6f6f44; background:#ff6f6f12}
+  .sev.med{color:var(--sev-med); border-color:#f3b95f44; background:#f3b95f12}
+  .sev.info{color:var(--sev-info); border-color:#54d6c244; background:#54d6c212}
+  .find p{margin:0; font-size:13.5px; color:var(--muted); flex:1}
+  .find .ftags{display:flex; flex-wrap:wrap; gap:6px}
+  .find .ftag{font-family:"JetBrains Mono",monospace; font-size:11px; color:var(--faint);
+    border:1px solid var(--line-soft); padding:3px 8px; border-radius:6px}
+
+  /* experience */
+  .xp{border-left:2px solid var(--line); padding-left:26px; position:relative}
+  .xp::before{content:""; position:absolute; left:-7px; top:4px; width:12px; height:12px; border-radius:50%;
+    background:var(--accent); box-shadow:0 0 0 4px rgba(84,214,194,.14)}
+  .xp .role{display:flex; flex-wrap:wrap; align-items:baseline; gap:10px 14px; margin-bottom:3px}
+  .xp h3{font-family:"Space Grotesk",sans-serif; font-size:19px; margin:0; letter-spacing:-.01em}
+  .xp .when{font-family:"JetBrains Mono",monospace; font-size:12.5px; color:var(--accent)}
+  .xp .org{font-family:"JetBrains Mono",monospace; font-size:12.5px; color:var(--faint); margin-bottom:12px}
+  .xp ul{margin:0; padding:0; list-style:none; display:grid; gap:9px}
+  .xp li{position:relative; padding-left:20px; color:#cdd6e2; font-size:14.5px}
+  .xp li::before{content:"▸"; position:absolute; left:0; color:var(--accent-dim)}
+  .bg-note{margin-top:22px; font-size:14.5px; color:var(--muted); max-width:64ch}
+  .bg-note b{color:#dbe3ee; font-weight:600}
+
+  /* contact */
+  .contact-card{background:linear-gradient(180deg,var(--surface),var(--bg-2));
+    border:1px solid var(--line); border-radius:18px; padding:38px 32px; text-align:center}
+  .contact-card h2{font-family:"Space Grotesk",sans-serif; font-size:clamp(24px,3.6vw,32px);
+    margin:0 0 12px; letter-spacing:-.02em}
+  .contact-card p{color:var(--muted); max-width:48ch; margin:0 auto 26px; font-size:16px}
+  .contact-cta{display:flex; gap:12px; justify-content:center; flex-wrap:wrap}
+
+  /* footer */
+  footer{border-top:1px solid var(--line-soft); padding:30px 0 44px}
+  .foot-inner{display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;
+    font-family:"JetBrains Mono",monospace; font-size:12px; color:var(--faint)}
+  .foot-inner a:hover{color:var(--accent)}
+
+  /* reveal */
+  .reveal{opacity:0; transform:translateY(18px); transition:opacity .6s ease, transform .6s ease}
+  .reveal.in{opacity:1; transform:none}
+  @media (prefers-reduced-motion:reduce){.reveal{opacity:1; transform:none; transition:none}}
+
+  :focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:4px}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:880px){
+    nav.links{display:none}
+    nav.links.open{display:flex; position:absolute; top:60px; right:16px; flex-direction:column;
+      background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:10px; gap:4px; min-width:190px;
+      box-shadow:0 24px 60px -30px rgba(0,0,0,.8)}
+    nav.links.open a{padding:10px 12px}
+    .burger{display:block}
+    .hero-grid{grid-template-columns:1fr; gap:34px}
+    .dossier{order:2}
+    .pipe{grid-template-columns:1fr; gap:18px}
+    .stage{padding:0 0 0 4px}
+    .stage:not(:last-child)::after{display:none}
+    .stage p{padding-left:38px}
+    .cert-grid,.skill-grid,.work-grid{grid-template-columns:1fr}
+  }
+  @media (max-width:560px){
+    .wrap,.nav-inner{padding-left:18px; padding-right:18px}
+    .hero{padding-top:54px}
+    .btn{flex:1; justify-content:center}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="#top"><span class="dot"></span>ihang<b>.</b>shakti<span style="color:var(--faint)">@sec</span></a>
+    <nav class="links" id="links">
+      <a href="#about">About</a>
+      <a href="#certs">Certifications</a>
+      <a href="#skills">Skills</a>
+      <a href="#work">Work</a>
+      <a href="#experience">Experience</a>
+      <a href="#contact">Contact</a>
+      <a class="cv" href="IHANG_ISHAMURA_SHAKTI_CV.pdf" target="_blank" rel="noopener">Résumé ↗</a>
+    </nav>
+    <button class="burger" id="burger" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+  <!-- HERO -->
+  <section class="hero" style="padding-bottom:0">
+    <div class="wrap">
+      <div class="hero-grid">
+        <div>
+          <p class="eyebrow">Web Application Penetration Tester</p>
+          <h1 class="name">Ihang<br>Ishamura Shakti</h1>
+          <p class="lead">I find and prove web vulnerabilities the way an attacker would — methodically, safely, and with reporting your team can actually act on.</p>
+          <div class="meta">
+            <span class="chip">📍 East Java, Indonesia</span>
+            <span class="chip ok">Open to SOC / Junior Pentest roles</span>
+            <span class="chip">CWSE · CAPT · CSOA · Security+</span>
+          </div>
+          <div class="cta">
+            <a class="btn primary" href="#contact">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z" opacity="0"/><path d="M4 6l8 6 8-6"/><rect x="3" y="5" width="18" height="14" rx="2"/></svg>
+              Get in touch
+            </a>
+            <a class="btn" href="IHANG_ISHAMURA_SHAKTI_CV.pdf" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>
+              Download CV
+            </a>
+            <!-- TODO: replace the href below with YOUR LinkedIn profile URL -->
+            <a class="btn" href="https://www.linkedin.com/in/ihangishamura" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5A2.5 2.5 0 1 0 5 8.5a2.5 2.5 0 0 0 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.53-1 1.84-2.05 3.78-2.05 4.04 0 4.79 2.66 4.79 6.12V21H20v-5.5c0-1.31-.02-3-1.83-3-1.83 0-2.11 1.43-2.11 2.9V21H9z"/></svg>
+              LinkedIn
+            </a>
+          </div>
+        </div>
+
+        <aside class="dossier" aria-label="Profile summary">
+          <div class="bar"><i></i><i></i><i></i><span>~/profile.json</span></div>
+          <dl>
+            <div class="row"><dt>role</dt><dd>Web App Penetration Tester</dd></div>
+            <div class="row"><dt>focus</dt><dd>OWASP · Exploitation · <b>Reporting</b></dd></div>
+            <div class="row"><dt>certs</dt><dd>Security+ · CWSE · CAPT · CSOA</dd></div>
+            <div class="row"><dt>method</dt><dd>Scope → Recon → Exploit → Report</dd></div>
+            <div class="row"><dt>status</dt><dd><b>available</b> for hire</dd></div>
+            <div class="row"><dt>langs</dt><dd>ID (native) · EN · 中文 (basic)</dd></div>
+          </dl>
+        </aside>
+      </div>
+    </div>
+
+    <!-- PIPELINE: signature element -->
+    <div class="pipe-band">
+      <div class="wrap">
+        <div class="pipe-head">Engagement methodology</div>
+        <div class="pipe">
+          <div class="stage"><div class="node"><span class="num">01</span><h4>Scope &amp; RoE</h4></div><p>Define targets, rules of engagement, and success criteria.</p></div>
+          <div class="stage"><div class="node"><span class="num">02</span><h4>Recon &amp; Enum</h4></div><p>Map attack surface, services, and entry points.</p></div>
+          <div class="stage"><div class="node"><span class="num">03</span><h4>Analysis</h4></div><p>Identify flaws across OWASP and business logic.</p></div>
+          <div class="stage"><div class="node"><span class="num">04</span><h4>Exploit &amp; Validate</h4></div><p>Prove impact safely with working proof-of-concept.</p></div>
+          <div class="stage"><div class="node"><span class="num">05</span><h4>Report &amp; Retest</h4></div><p>Clear findings, CVSS, fixes — then verify remediation.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="wrap reveal">
+      <div class="sec-head">
+        <span class="sec-tag">01</span>
+        <h2 class="sec-title">About</h2>
+        <span class="sec-rule"></span>
+      </div>
+      <div class="about">
+        <p>I'm a cybersecurity practitioner focused on <strong style="color:#e9eef6;font-weight:600">web application security and penetration testing</strong>. I came into security from a legal background — and that's where the habits this work rewards were formed: patient investigation, careful documentation, and explaining complex things clearly.</p>
+        <p>I hold the CompTIA Security+ and HackViser's CWSE, CAPT, and CSOA certifications, earned through 80+ practical labs on live systems. On every engagement I work to a structured methodology, from scoping through to a report your developers can act on — not just a list of alerts.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CERTIFICATIONS -->
+  <section id="certs" style="background:var(--bg-2); border-top:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft)">
+    <div class="wrap reveal">
+      <div class="sec-head">
+        <span class="sec-tag">02</span>
+        <h2 class="sec-title">Certifications</h2>
+        <span class="sec-rule"></span>
+      </div>
+      <div class="cert-grid">
+        <div class="cert">
+          <span class="code">CWSE</span>
+          <h3>Certified Web Security Expert</h3>
+          <div class="issuer">HackViser · 2026</div>
+          <p>Advanced web application exploitation — assessed entirely on live systems with a formal penetration-test report.</p>
+        </div>
+        <div class="cert">
+          <span class="code">SEC+</span>
+          <h3>CompTIA Security+</h3>
+          <div class="issuer">CompTIA · ID COMP001022996371</div>
+          <p>Industry-standard foundation across threats, security architecture, operations, and program governance.</p>
+        </div>
+        <div class="cert">
+          <span class="code">CAPT</span>
+          <h3>Certified Associate Penetration Tester</h3>
+          <div class="issuer">HackViser · 40+ labs</div>
+          <p>End-to-end penetration testing across web, network, privilege escalation, OSINT, and reporting.</p>
+        </div>
+        <div class="cert">
+          <span class="code">CSOA</span>
+          <h3>Certified Security Operations Analyst</h3>
+          <div class="issuer">HackViser · 40+ labs</div>
+          <p>Blue-team operations: SIEM/EDR, log analysis, incident response, threat hunting, and digital forensics.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="wrap reveal">
+      <div class="sec-head">
+        <span class="sec-tag">03</span>
+        <h2 class="sec-title">Skills</h2>
+        <span class="sec-rule"></span>
+      </div>
+      <div class="skill-grid">
+        <div class="skill">
+          <h3>Offensive Security</h3>
+          <div class="tags">
+            <span class="tag">Web app pentesting</span><span class="tag">OWASP Top 10</span>
+            <span class="tag">Vulnerability assessment</span><span class="tag">Recon &amp; enumeration</span>
+            <span class="tag">Exploitation &amp; validation</span><span class="tag">Privilege escalation</span>
+            <span class="tag">OSINT</span><span class="tag">Social engineering</span>
+          </div>
+        </div>
+        <div class="skill">
+          <h3>Defensive / SOC</h3>
+          <div class="tags">
+            <span class="tag">Security monitoring</span><span class="tag">SIEM &amp; EDR</span>
+            <span class="tag">Log analysis</span><span class="tag">Incident response</span>
+            <span class="tag">Threat hunting</span><span class="tag">Threat intelligence</span>
+            <span class="tag">Packet analysis</span><span class="tag">Digital forensics</span>
+          </div>
+        </div>
+        <div class="skill">
+          <h3>Tooling</h3>
+          <div class="tags">
+            <span class="tag">Kali Linux</span><span class="tag">Nmap</span><span class="tag">Burp Suite</span>
+            <span class="tag">Wireshark</span><span class="tag">Gobuster</span><span class="tag">ffuf</span>
+          </div>
+        </div>
+        <div class="skill">
+          <h3>Foundations &amp; Reporting</h3>
+          <div class="tags">
+            <span class="tag">Linux / Windows</span><span class="tag">Networking</span><span class="tag">Cryptography basics</span>
+            <span class="tag">CVSS scoring</span><span class="tag">PoC &amp; repro steps</span><span class="tag">Impact analysis</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORK / TECHNICAL HIGHLIGHTS -->
+  <section id="work" style="background:var(--bg-2); border-top:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft)">
+    <div class="wrap reveal">
+      <div class="sec-head">
+        <span class="sec-tag">04</span>
+        <h2 class="sec-title">Technical Highlights</h2>
+        <span class="sec-rule"></span>
+      </div>
+      <p class="work-note">// vulnerability classes demonstrated in CWSE/CAPT labs &amp; continuous practice — client details confidential under NDA</p>
+      <div class="work-grid">
+        <div class="find">
+          <div class="top"><h3>SQL Injection</h3><span class="sev high">Critical</span></div>
+          <p>Error-based, UNION, and boolean / time-blind extraction — reading database contents through filtered and quote-wrapped inputs.</p>
+          <div class="ftags"><span class="ftag">error-based</span><span class="ftag">UNION</span><span class="ftag">blind</span><span class="ftag">filter bypass</span></div>
+        </div>
+        <div class="find">
+          <div class="top"><h3>Cross-Site Scripting</h3><span class="sev med">High</span></div>
+          <p>Stored and reflected XSS via attributes, HTTP headers, SVG uploads, and HTML-encoded contexts.</p>
+          <div class="ftags"><span class="ftag">stored</span><span class="ftag">reflected</span><span class="ftag">SVG</span><span class="ftag">encoding bypass</span></div>
+        </div>
+        <div class="find">
+          <div class="top"><h3>File Upload → RCE</h3><span class="sev high">Critical</span></div>
+          <p>Defeating magic-byte and MIME filters with image/PHP polyglots to land a webshell and execute commands.</p>
+          <div class="ftags"><span class="ftag">polyglot</span><span class="ftag">magic bytes</span><span class="ftag">RCE</span></div>
+        </div>
+        <div class="find">
+          <div class="top"><h3>Command Injection</h3><span class="sev high">Critical</span></div>
+          <p>Operator, blacklist, and single-quote-context bypasses; blind extraction over response timing and out-of-band channels.</p>
+          <div class="ftags"><span class="ftag">blind</span><span class="ftag">time-based</span><span class="ftag">OOB</span><span class="ftag">WAF bypass</span></div>
+        </div>
+        <div class="find">
+          <div class="top"><h3>File Inclusion (LFI/RFI)</h3><span class="sev high">Critical</span></div>
+          <p>Path-filter bypasses and Apache log poisoning to turn file inclusion into remote code execution.</p>
+          <div class="ftags"><span class="ftag">LFI</span><span class="ftag">RFI</span><span class="ftag">log poisoning</span></div>
+        </div>
+        <div class="find">
+          <div class="top"><h3>Known-CVE Exploitation</h3><span class="sev med">High</span></div>
+          <p>Identifying and chaining unauthenticated-disclosure CVEs (e.g. CMS info leaks) through to admin and host access.</p>
+          <div class="ftags"><span class="ftag">CVE</span><span class="ftag">recon</span><span class="ftag">post-exploitation</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience">
+    <div class="wrap reveal">
+      <div class="sec-head">
+        <span class="sec-tag">05</span>
+        <h2 class="sec-title">Experience</h2>
+        <span class="sec-rule"></span>
+      </div>
+      <div class="xp">
+        <div class="role">
+          <h3>Freelance Penetration Tester</h3>
+          <span class="when">Jan 2024 — Present</span>
+        </div>
+        <div class="org">Remote, Indonesia · regional enterprise &amp; public-sector clients (under NDA)</div>
+        <ul>
+          <li>Run end-to-end web and network penetration tests using a structured five-phase methodology — scope, recon, analysis, exploitation, and reporting with retest.</li>
+          <li>Identify and verify vulnerabilities, then produce reliable proof-of-concept exploits and prioritized, risk-based remediation guidance.</li>
+          <li>Write reports with clear reproduction steps, CVSS scoring, and business-impact analysis for both technical teams and management.</li>
+        </ul>
+      </div>
+      <p class="bg-note"><b>Background.</b> Earlier roles as a paralegal and in automotive sales and warehouse operations built the investigation, documentation, and process discipline I bring to security work today. Full history is in my <a class="accent" href="IHANG_ISHAMURA_SHAKTI_CV.pdf" target="_blank" rel="noopener">résumé</a>.</p>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" style="padding-top:40px">
+    <div class="wrap reveal">
+      <div class="contact-card">
+        <h2>Let's work together</h2>
+        <p>Open to SOC Analyst and Junior Penetration Tester roles, and to freelance web-security assessments. The fastest way to reach me is email.</p>
+        <div class="contact-cta">
+          <a class="btn primary" href="mailto:ihangishamura88@gmail.com">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 6l8 6 8-6"/></svg>
+            ihangishamura88@gmail.com
+          </a>
+          <!-- TODO: replace the href below with YOUR LinkedIn profile URL -->
+          <a class="btn" href="https://www.linkedin.com/in/ihangishamura" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5A2.5 2.5 0 1 0 5 8.5a2.5 2.5 0 0 0 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.53-1 1.84-2.05 3.78-2.05 4.04 0 4.79 2.66 4.79 6.12V21H20v-5.5c0-1.31-.02-3-1.83-3-1.83 0-2.11 1.43-2.11 2.9V21H9z"/></svg>
+            LinkedIn
+          </a>
+          <a class="btn" href="tel:+6285141007199">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.6a2 2 0 0 1-.5 2.1L8.1 9.8a16 16 0 0 0 6 6l1.4-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.6 2.6.7a2 2 0 0 1 1.7 2z"/></svg>
+            +62 851-4100-7199
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-inner">
+      <span>© <span id="yr"></span> Ihang Ishamura Shakti — East Java, Indonesia</span>
+      <span>built with care · <a href="#top">back to top ↑</a></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // year
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  // mobile menu
+  const burger = document.getElementById('burger');
+  const links = document.getElementById('links');
+  burger.addEventListener('click', () => {
+    const open = links.classList.toggle('open');
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    links.classList.remove('open'); burger.setAttribute('aria-expanded','false');
+  }));
+
+  // scroll reveal
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // active nav link
+  const navLinks = [...document.querySelectorAll('nav.links a[href^="#"]')];
+  const secs = navLinks.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  const spy = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting){
+        navLinks.forEach(l => l.style.color = '');
+        const active = navLinks.find(l => l.getAttribute('href') === '#' + e.target.id);
+        if (active) active.style.color = 'var(--text)';
+      }
+    });
+  }, { rootMargin: '-45% 0px -50% 0px' });
+  secs.forEach(s => spy.observe(s));
+</script>
+</body>
+</html>
